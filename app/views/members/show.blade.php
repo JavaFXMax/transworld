@@ -91,8 +91,12 @@ function asMoney($value) {
 
 <table class="table table-bordered table-hover">
 
-
-
+    <tr>
+		<td>Total Membership Fee(Supposed to be Paid)</td><td>{{ $member->total_membership}}</td>
+	</tr>
+    <tr>
+		<td>Total Share Capital(Supposed to be Paid)</td><td>{{ $member->total_shares}}</td>
+	</tr>
 	<tr>
     @if($member->gender == 'M')
 		<td>Gender</td><td>Male</td>
@@ -109,22 +113,13 @@ function asMoney($value) {
      @if($member->gender == '')
     <td>Gender</td><td></td>
      @else
-     
      @endif
-
 	</tr>
-
 	<tr>
-
 		<td>Phone Number</td><td>{{ $member->phone}}</td>
-
-
 	</tr>
 	<tr>
-
 		<td>Email Address</td><td>{{ $member->email}}</td>
-
-
 	</tr>
 	<tr>
 

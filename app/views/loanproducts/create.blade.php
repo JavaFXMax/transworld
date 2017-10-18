@@ -45,13 +45,10 @@
         <div class="form-group">
             <label for="username">Currency</label>
             <select class="form-control" name="currency" required>
-
                 @foreach($currencies as $currency)
                 <option value="{{ $currency->shortname }}"> {{ $currency->name }}</option>
                 @endforeach
                
-
-
             </select>
         </div>
 
@@ -116,9 +113,9 @@
 
                 <option></option>
                 @foreach($accounts as $account)
-                @if($account->category == 'ASSET')
-                <option value="{{ $account->id }}">{{ $account->name."(".$account->code.")" }}</option>
-                @endif
+                    @if($account->category == 'ASSET')
+                    <option value="{{ $account->id }}">{{ $account->name."(".$account->code.")" }}</option>
+                    @endif
                 @endforeach
 
 

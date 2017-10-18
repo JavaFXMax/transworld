@@ -4,7 +4,7 @@ class Member extends \Eloquent {
 
 	// Add your validation rules here
 	public static $rules = [
-		 'name' => 'required',
+		 'mname' => 'required',
 		 'membership_no' => 'required',
 		 'branch_id' => 'required',
 		 'phone' => 'required'
@@ -88,4 +88,25 @@ class Member extends \Eloquent {
 
 		return $member->membership_no;
 	}
+    
+    public static function checkContribution($member_id, $type){
+        /*Get The member*/
+        $member= Member::where('id','=',$member_id)->get()->first();
+        /*Get The Share Account*/
+        $shareaccount= Shareaccount::where('member_id','=',$member_id)->get()->first();
+        
+        $share_transactions=  Sharetransaction::where('shareaccount_id','=',$shareaccount->id)
+                ->where('type','=','credit')->where('pay_for','=','shares')->sum('amount');
+        
+        $membership_transactions= Sharetransaction::where('shareaccount_id','=',$shareaccount->id)
+                ->where('type','=','credit')->where('pay_for','=','membership')->sum('amount');
+        if($type == 'shares' && $share_transactions >= $member->total_shares){
+             return $status= 'paid';
+        }
+        
+        if($type == 'membership' && $membership_transactions >= $member->total_membership){
+            return $status= 'paid';
+        }
+        
+    }
 }

@@ -48,7 +48,7 @@ class Loanaccount extends \Eloquent {
 		$loanproduct_id = array_get($data, 'loanproduct_id');
 
 		$member = Member::findorfail($member_id);
-
+        $date = array_get($data, 'application_date');
 		$loanproduct = Loanproduct::findorfail($loanproduct_id);
 
 		$application = new Loanaccount;
@@ -57,7 +57,22 @@ class Loanaccount extends \Eloquent {
 		$application->member()->associate($member);
 		$application->loanproduct()->associate($loanproduct);
 		$application->application_date = array_get($data, 'application_date');
-		$application->amount_applied = array_get($data, 'amount_applied');
+        /*Get Loan Insurance*/
+        $insurance =Loanaccount::getInsurance(array_get($data, 'repayment_duration'),
+                                              array_get($data, 'amount_applied'));
+        $amount_taken= array_get($data, 'amount_applied')- $insurance;
+        /*Record Insurance as income*/
+        $insurance_journal= new Journal;
+        $account = Account::where('category','=','INCOME')->get()->first();
+        $insurance_journal->account()->associate($account);
+        $insurance_journal->date = $date;
+        $insurance_journal->trans_no = strtotime($date);
+        $insurance_journal->initiated_by = Confide::user()->username;
+        $insurance_journal->amount = $insurance;
+        $insurance_journal->type = 'credit';
+        $insurance_journal->description = "Loan Insurance Fee";
+        $insurance_journal->save();
+		$application->amount_applied = $amount_taken;
 		$application->interest_rate = $loanproduct->interest_rate;
 		$application->period = $loanproduct->period;
 		$application->repayment_duration = array_get($data, 'repayment_duration');
@@ -391,45 +406,24 @@ class Loanaccount extends \Eloquent {
 		$formula = $loanaccount->loanproduct->formula;
 
 		if($formula == 'SL'){
-
 			$interest_amount = $principal * $rate * $time;
-
 		}
-
-
 		if($formula == 'RB'){
-
-			
-    		
-    		
    			$principal_bal = $principal;
     		$interest_amount = 0;
     		$principal_pay = $principal/$time;
-
     		for($i=1; $i<=$time; $i++){
-
-
         		$interest_amount = ($interest_amount + ($principal_bal * $rate));
-
         		$principal_bal = $principal_bal - $principal_pay;
-
-        		
-    		}
-
-          
+    		} 
 		}
-
-
 		return $interest_amount;
 	}
 
 
 	public static function hasAccount($member, $loanproduct){
-
 		foreach ($member->loanaccounts as $loanaccount) {
-			
 			if($loanaccount->loanproduct->name == $loanproduct->name){
-
 				return true;
 			}
 			else {
@@ -437,7 +431,13 @@ class Loanaccount extends \Eloquent {
 			}
 		}
 	}
-
+    
+    /*Loan Insurance*/
+    public static function getInsurance($repayment_period, $amount_applied){
+        $insurance = (((5.03*$repayment_period) + 3.03)* $amount_applied)/6000;
+        
+        return $insurance;
+    }
 
 	public static function getTotalDue($loanaccount){
 

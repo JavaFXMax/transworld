@@ -203,21 +203,19 @@ function initials($str) {
                         <label for="username">Member Names <span style="color:red">*</span></label>
                         <input class="form-control" placeholder="" type="text" name="mname" id="mname" value="{{{ Input::old('mname') }}}">
                     </div>
-
-                    <div class="form-group">
-                        <label for="username">ID Number</label>
-                        <input class="form-control" placeholder="" type="text" name="mid_number" id="mid_number" value="{{{ Input::old('mid_number') }}}">
+                     <div class="form-group">
+                        <label for="username">Phone Number <span style="color:red">*</span></label>
+                        <input class="form-control" placeholder="" type="text" name="phone" id="phone" value="{{{ Input::old('phone') }}}">
                     </div>
-
+                     <div class="form-group">
+                        <label for="username">Address</label>
+                        <textarea class="form-control"  name="address" id="address">{{{ Input::old('email') }}}</textarea>
+                    </div>
                     <div class="form-group">
                         <label for="username">Gender</label><br>
                         <input class=""  type="radio" name="gender" id="gender" value="M"> Male
                         <input class=""  type="radio" name="gender" id="gender" value="F"> Female
                     </div>
-
-
-
-
 
                 </fieldset>
 
@@ -228,19 +226,21 @@ function initials($str) {
              <div class="col-lg-4">
 
                  <fieldset>
-                    <div class="form-group">
-                        <label for="username">Phone Number <span style="color:red">*</span></label>
-                        <input class="form-control" placeholder="" type="text" name="phone" id="phone" value="{{{ Input::old('phone') }}}">
+                     <div class="form-group">
+                        <label for="username">ID Number</label>
+                        <input class="form-control" placeholder="" type="text" name="mid_number" id="mid_number" value="{{{ Input::old('mid_number') }}}">
                     </div>
-
-                    <div class="form-group">
+                     <div class="form-group">
                         <label for="username">Email Address</label>
                         <input class="form-control" placeholder="" type="text" name="email" id="email" value="{{{ Input::old('email') }}}">
                     </div>
-
-                     <div class="form-group">
-                        <label for="username">Address</label>
-                        <textarea class="form-control"  name="address" id="address">{{{ Input::old('email') }}}</textarea>
+                    <div class="form-group">
+                        <label for="total_membership_fee">Total Membership Fee(To be Paid)</label>
+                        <input class="form-control" placeholder="" type="text" name="total_membership_fee" id="total_membership_fee" value="{{{ Input::old('total_membership_fee') }}}">
+                    </div>
+                    <div class="form-group">
+                        <label for="total_share_capital">Total Share Capital(To be Paid)</label>
+                        <input class="form-control" placeholder="" type="text" name="total_share_capital" id="total_share_capital" value="{{{ Input::old('total_share_capital') }}}">
                     </div>
                     </fieldset>
 
@@ -250,9 +250,6 @@ function initials($str) {
 
              <div class="col-lg-4">
                 <fieldset>
-
-                    
-
                     <div class="form-group">
                         <label for="username">Monthly Remmitance Amount</label>
                         <input class="form-control" placeholder="" type="text" name="monthly_remittance_amount" id="monthly_remittance_amount" value="{{{ Input::old('monthly_remittance_amount') }}}">

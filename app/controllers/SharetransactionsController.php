@@ -47,16 +47,32 @@ class SharetransactionsController extends \BaseController {
 		}
 
 		$shareaccount = Shareaccount::findOrFail(Input::get('account_id'));
-
+        /*Pay Membership Fee*/
 		$sharetransaction = new Sharetransaction;
-
 		$sharetransaction->date = Input::get('date');
 		$sharetransaction->shareaccount()->associate($shareaccount);
-		$sharetransaction->amount = Input::get('amount') + Input::get('fee_amount');
+        if(Input::get('fee_amount') == ''){
+            $sharetransaction->amount =0.00;
+        }
+		$sharetransaction->amount =Input::get('fee_amount');
 		$sharetransaction->type = Input::get('type');
+        $sharetransaction->pay_for = 'membership';
 		$sharetransaction->description = Input::get('description');
 		$sharetransaction->save();
-
+        
+        /*Pay Share Capital*/
+		$sharetransaction1 = new Sharetransaction;
+		$sharetransaction1->date = Input::get('date');
+		$sharetransaction1->shareaccount()->associate($shareaccount);
+        if(Input::get('amount') == ''){
+            $sharetransaction1->amount =0.00;
+        }
+		$sharetransaction1->amount = Input::get('amount');
+		$sharetransaction1->type = Input::get('type');
+        $sharetransaction1->pay_for = 'shares';
+		$sharetransaction1->description = Input::get('description');
+		$sharetransaction1->save();
+        
 		return Redirect::to('sharetransactions/show/'.$shareaccount->id);
 	
 	}
@@ -79,16 +95,7 @@ class SharetransactionsController extends \BaseController {
 
 		$balance = $credit - $debit;
 
-		$sh = Share::findOrFail(1);
-
-		$sharevalue = $sh->value;
-
-		if($sharevalue != 0){
-			$shares = $balance/$sharevalue;
-		} else {
-
-			$shares = 0;
-		}
+		$shares = $balance;
 		
 
 		return View::make('sharetransactions.show', compact('account', 'shares'));

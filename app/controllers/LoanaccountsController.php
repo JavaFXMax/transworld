@@ -483,21 +483,87 @@ public function shopapplication()
 
 	public function gettopup($id){
 		$loanaccount = Loanaccount::findOrFail($id);
-		$topups=Topup::where('loanaccount_id',$id)->get();
-		return View::make('loanaccounts.topup', compact('loanaccount','topups'));
+		//$topups=Topup::where('loanaccount_id',$id)->get(); Was for Buruburu
+		return View::make('loanaccounts.topup', compact('loanaccount'));
 	}
 
 
 
 	public function topup($id){		
 		$data = Input::all();
-		//include the new function here
-		$loanaccount = Loanaccount::findOrFail($id);
-		Topup::recordTopup($loanaccount,$data);
-		$amount=$data['amount'];
+        $amount=$data['amount'];
 		$date=$data['top_up_date'];
-		Loantransaction::topupLoan($loanaccount, $amount, $date);
-		return Redirect::to('loans/show/'.$loanaccount->id);		
+		//include the new function here
+		$loanaccount = Loanaccount::findOrFail($data['loanaccount']);
+        /*Get Loan Balance*/
+        $loan_balance= Loantransaction::getLoanBalance($loanaccount);
+        /*110% of Loan Balance*/
+        $amount_to_top= 1.1 * $loan_balance;
+        $sacco_income= 0.1 * $loan_balance;
+        
+        if($amount <= $amount_to_top){
+            return Redirect::back()->withCaution('Top up amount should be greater than 
+            110% of the loan balance');
+        }
+        /*Pay Remaining Balance*/
+        $transaction = new Loantransaction;
+		$transaction->loanaccount()->associate($loanaccount);
+		$transaction->date = $date;
+		$transaction->description = 'loan repayment';
+		$transaction->amount = $loan_balance;
+		$transaction->type = 'credit';
+		$transaction->payment_via = 'Cash';
+		$transaction->save();
+        /*Make a journal Entry*/
+        $journal = new Journal;
+        $account = Account::where('category','=','INCOME')->get()->first();
+		$journal->account()->associate($account);
+		$journal->date = $date;
+		$journal->trans_no = strtotime($date);
+		$journal->initiated_by = Confide::user()->username;
+		$journal->amount = $sacco_income;
+		$journal->type = 'credit';
+		$journal->description = "Loan Top Up Charge";
+		$journal->save();
+        /*Create a Separate Loan Account*/
+        if($amount >0){
+            $loanaccount_topped= new Loanaccount;
+            $loanaccount_topped->is_new_application= FALSE;
+            $loanaccount_topped->member_id=$loanaccount->member_id;
+            $loanaccount_topped->loanproduct_id=$loanaccount->loanproduct_id;
+            $loanaccount_topped->application_date = $date;
+            $loanaccount_topped->amount_applied = $amount;
+                /*Get Loan Insurance*/
+                $insurance =Loanaccount::getInsurance($loanaccount->repayment_duration, $amount);
+                $amount_taken = $amount- $insurance;
+                /*Record Insurance as income*/
+                $insurance_journal= new Journal;
+                $account = Account::where('category','=','INCOME')->get()->first();
+                $insurance_journal->account()->associate($account);
+                $insurance_journal->date = $date;
+                $insurance_journal->trans_no = strtotime($date);
+                $insurance_journal->initiated_by = Confide::user()->username;
+                $insurance_journal->amount = $insurance;
+                $insurance_journal->type = 'credit';
+                $insurance_journal->description = "Loan Insurance Fee";
+                $insurance_journal->save();
+            
+            $loanaccount_topped->interest_rate = $loanaccount->interest_rate;
+            $loanaccount_topped->period = $loanaccount->period;
+            $loanaccount_topped->repayment_duration = $loanaccount->repayment_duration;
+            $loanaccount_topped->account_number = Loanaccount::loanAccountNumber($loanaccount);
+            $loanaccount_topped->is_approved=TRUE;
+            $loanaccount_topped->amount_approved=$amount_taken;
+            $loanaccount_topped->is_disbursed=TRUE;
+            $loanaccount_topped->amount_disbursed=$amount_taken;
+            $loanaccount_topped->date_disbursed=$date;
+            
+            $loanaccount_topped->save();
+            
+            Loantransaction::disburseLoan($loanaccount_topped, $amount_taken, $date);
+        }
+		//Loantransaction::topupLoan($loanaccount, $top_up_amount, $date);
+		return Redirect::to('loans/show/'.$loanaccount_topped->id);		
 	}
 
 	public function topupReport($id){

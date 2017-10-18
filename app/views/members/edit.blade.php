@@ -190,12 +190,14 @@ tr,#vcontainer input,vcontainer textarea{height:30px;width:300px;border:1px soli
                         <label for="username">Member Names</label>
                         <input class="form-control" placeholder="" type="text" name="mname" id="mname" value="{{$member->name}}" required>
                     </div>
-
-                    <div class="form-group">
-                        <label for="username">ID Number</label>
-                        <input class="form-control" placeholder="" type="text" name="mid_number" id="mid_number" value="{{$member->id_number}}" required>
+                     <div class="form-group">
+                        <label for="username">Phone Number</label>
+                        <input class="form-control" placeholder="" type="text" name="phone" id="phone" value="{{ $member->phone }}">
                     </div>
-
+                     <div class="form-group">
+                        <label for="username">Address</label>
+                        <textarea class="form-control"  name="address" id="address">{{ $member->address }}</textarea>
+                    </div>
                     <div class="form-group">
                         <label for="username">Gender</label><br>
                         @if($member->gender === 'M')
@@ -203,7 +205,7 @@ tr,#vcontainer input,vcontainer textarea{height:30px;width:300px;border:1px soli
                         <input class=""  type="radio" name="gender" id="gender" value="F"> Female
                         @endif
 
-                         @if($member->gender === 'F')
+                        @if($member->gender === 'F')
                         <input class=""  type="radio" name="gender" id="gender" value="M" > Male
                         <input class=""  type="radio" name="gender" id="gender" value="F" checked> Female
                         @endif
@@ -213,33 +215,25 @@ tr,#vcontainer input,vcontainer textarea{height:30px;width:300px;border:1px soli
                         <input class=""  type="radio" name="gender" id="gender" value="F"> Female
                         @endif
                     </div>
-
-
-
-
-
                 </fieldset>
-
-
              </div>
-
-
              <div class="col-lg-4">
-
                  <fieldset>
-                    <div class="form-group">
-                        <label for="username">Phone Number</label>
-                        <input class="form-control" placeholder="" type="text" name="phone" id="phone" value="{{ $member->phone }}">
+                     <div class="form-group">
+                        <label for="username">ID Number</label>
+                        <input class="form-control" placeholder="" type="text" name="mid_number" id="mid_number" value="{{$member->id_number}}" required>
                     </div>
-
                     <div class="form-group">
                         <label for="username">Email Address</label>
                         <input class="form-control" placeholder="" type="text" name="email" id="email" value="{{ $member->email }}">
-                    </div>
-
+                     </div>
                      <div class="form-group">
-                        <label for="username">Address</label>
-                        <textarea class="form-control"  name="address" id="address">{{ $member->address }}</textarea>
+                        <label for="total_membership_fee">Total Membership Fee(To be Paid)</label>
+                        <input class="form-control" placeholder="" type="text" name="total_membership_fee" id="total_membership_fee" value="{{$member->total_membership}}">
+                    </div>
+                    <div class="form-group">
+                        <label for="total_share_capital">Total Share Capital(To be Paid)</label>
+                        <input class="form-control" placeholder="" type="text" name="total_share_capital" id="total_share_capital" value="{{$member->total_shares}}">
                     </div>
                     </fieldset>
 

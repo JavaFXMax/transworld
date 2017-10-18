@@ -30,8 +30,7 @@ function asMoney($value) {
 
 </div>	
 
-@if (Session::has('flash_message'))
-
+    @if (Session::has('flash_message'))
       <div class="alert alert-success">
       {{ Session::get('flash_message') }}
      </div>

@@ -46,7 +46,8 @@ class VehicleIncomesController extends \BaseController {
         $assign = Vehicle::where('id',Input::get('vehicle_id'))->first();
         $sum_amount=0;
         for ($i=0; $i <count(array_get($data, 'payment_names')) ; $i++) { 
-            if((array_get($data, 'payment_names')[$i] != '' || array_get($data, 'payment_names')[$i] != null)){
+            if((array_get($data, 'payment_names')[$i] != '' || 
+                array_get($data, 'payment_names')[$i] != null)){
                 $date = Input::get('date');
                 $saving = Savingaccount::where('member_id',$assign->member_id)
                     ->first();
@@ -166,8 +167,12 @@ class VehicleIncomesController extends \BaseController {
             $sharetransaction = new Sharetransaction;
             $sharetransaction->date = date("Y-m-d");
             $sharetransaction->shareaccount()->associate($shareaccount);
+            if(Input::get('shares')== ''){
+               $sharetransaction->amount = 0.00; 
+            }
             $sharetransaction->amount = str_replace( ',', '', Input::get('shares'));
             $sharetransaction->type = "credit";
+            $sharetransaction->pay_for='shares';
             $sharetransaction->description = "Shares from vehicle income";
             $sharetransaction->save();
 
@@ -184,6 +189,7 @@ class VehicleIncomesController extends \BaseController {
 		$sharetransaction3->shareaccount()->associate($shareaccount3);
 		$sharetransaction3->amount = str_replace( ',', '', Input::get('petrol_investment'));
 		$sharetransaction3->type = "credit";
+        $sharetransaction3->pay_for='others';
 		$sharetransaction3->description = "Petrol Station Investment";
 		$sharetransaction3->save();
 
@@ -214,6 +220,7 @@ class VehicleIncomesController extends \BaseController {
 		$sharetransaction33->shareaccount()->associate($shareaccount33);
 		$sharetransaction33->amount = str_replace( ',', '', Input::get('insurance'));
 		$sharetransaction33->type = "credit";
+        $sharetransaction33->pay_for='others';
 		$sharetransaction33->description = "Insurance Payment";
 		$sharetransaction33->save();
 
@@ -228,8 +235,12 @@ class VehicleIncomesController extends \BaseController {
 		$sharetransaction333 = new Sharetransaction;
 		$sharetransaction333->date = date("Y-m-d");
 		$sharetransaction333->shareaccount()->associate($shareaccount333);
+        if(Input::get('fee_amount') ==''){
+            $sharetransaction333->amount = 0.00;
+        }
 		$sharetransaction333->amount = str_replace( ',', '', Input::get('fee_amount'));
 		$sharetransaction333->type = "credit";
+        $sharetransaction333->pay_for= 'membership';
 		$sharetransaction333->description = "Membership Fee Payment";
 		$sharetransaction333->save();
 

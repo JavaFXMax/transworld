@@ -18,7 +18,8 @@ class Loantransaction extends \Eloquent {
 
     public static function getLoanAcc($loanaccount,$from,$to){
 
-		$payments = DB::table('loantransactions')->where('loanaccount_id', '=', $loanaccount->id)->where('type', '=', 'credit')->whereBetween('date', array($from, $to))->sum('amount');
+		$payments = DB::table('loantransactions')->where('loanaccount_id', '=', $loanaccount->id)
+            ->where('type', '=', 'credit')->whereBetween('date', array($from, $to))->sum('amount');
 
 		$loanamount = Loanaccount::getLoanAmount($loanaccount);
 	
@@ -29,10 +30,6 @@ class Loantransaction extends \Eloquent {
 	}
 
 	public static function getLoanBalance($loanaccount){
-
-	
-
-
 		//$principal_paid = Loanrepayment::getPrincipalPaid($loanaccount);
 		//$interest_paid = Loanrepayment::getInterestPaid($loanaccount);
 
@@ -165,7 +162,6 @@ class Loantransaction extends \Eloquent {
 	public static function repayLoan($loanaccount, $amount, $date, $category, $member){
 
 		$transaction = new Loantransaction;
-
 		$transaction->loanaccount()->associate($loanaccount);
 		$transaction->date = $date;
 		$transaction->description = 'loan repayment';
@@ -173,11 +169,7 @@ class Loantransaction extends \Eloquent {
 		$transaction->type = 'credit';
 		$transaction->payment_via = $category;
 		$transaction->save();
-
-		
 		Audit::logAudit($date, Confide::user()->username, 'loan repayment', 'Loans', $amount);
-
-
 
 	}
 
@@ -245,19 +237,14 @@ class Loantransaction extends \Eloquent {
 
 
 	public static function topupLoan($loanaccount, $amount, $date){
-
 		$transaction = new Loantransaction;
-
 		$transaction->loanaccount()->associate($loanaccount);
 		$transaction->date = $date;
 		$transaction->description = 'loan top up';
 		$transaction->amount = $amount;
 		$transaction->type = 'debit';
 		$transaction->save();
-
-
 		$account = Loanposting::getPostingAccount($loanaccount->loanproduct, 'disbursal');
-
 		$data = array(
 			'credit_account' =>$account['credit'] , 
 			'debit_account' =>$account['debit'] ,
@@ -267,17 +254,9 @@ class Loantransaction extends \Eloquent {
 			'description' => 'loan top up'
 
 			);
-
-
 		$journal = new Journal;
-
-
 		$journal->journal_entry($data);
-
 		Audit::logAudit($date, Confide::user()->username, 'loan to up', 'Loans', $amount);
-
-
-
 	}
 
 

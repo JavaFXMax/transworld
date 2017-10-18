@@ -131,7 +131,6 @@
             <textarea class="form-control" name="address" id="address" >{{ $organization->address }}</textarea>
            
         </div>
-
         @if (Session::get('error'))
             <div class="alert alert-error alert-danger">
                 @if (is_array(Session::get('error')))
@@ -139,28 +138,15 @@
                 @endif
             </div>
         @endif
-
         @if (Session::get('notice'))
             <div class="alert">{{ Session::get('notice') }}</div>
         @endif
-
-        
-
-
-
-
-
-
-
-        
       </div>
       <div class="modal-footer">
-        
         <div class="form-actions form-group">
         	<button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Close</button>
           <button type="submit" class="btn btn-primary btn-sm">Update Details</button>
         </div>
-
     </fieldset>
 </form>
       </div>
@@ -195,6 +181,7 @@
         @endif
         @if (Session::get('notice'))
             <div class="alert">{{ Session::get('notice') }}</div>
+        @endif
       </div>
       <div class="modal-footer">
         
@@ -209,14 +196,6 @@
     </div>
   </div>
 </div>
-
-
-
-
-
-
-
-
 
 
 

@@ -89,12 +89,6 @@ class MembersController extends \BaseController {
 			$member->group()->associate($group);
 		}
 
-		
-
-		
-
-		
-
 
 		if(Input::hasFile('photo')){
 
@@ -141,6 +135,8 @@ class MembersController extends \BaseController {
 		$member->bank_id = Input::get('bank_id');
 		$member->bank_branch_id = Input::get('bbranch_id');
 		$member->bank_account_number = Input::get('bank_acc');
+        $member->total_membership=Input::get('total_membership_fee');
+        $member->total_shares=Input::get('total_share_capital');
 		$member->monthly_remittance_amount = Input::get('monthly_remittance_amount');
 		$member->gender = Input::get('gender');
 		if(Input::get('active') == '1'){
@@ -374,6 +370,8 @@ class MembersController extends \BaseController {
 		$member->bank_id = Input::get('bank_id');
 		$member->bank_branch_id = Input::get('bbranch_id');
 		$member->bank_account_number = Input::get('bank_acc');
+        $member->total_membership=Input::get('total_membership_fee');
+        $member->total_shares=Input::get('total_share_capital');
 		$member->monthly_remittance_amount = Input::get('monthly_remittance_amount');
 		$member->gender = Input::get('gender');
 		$member->update();

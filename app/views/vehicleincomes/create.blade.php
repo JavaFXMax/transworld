@@ -52,6 +52,32 @@ if($(this).val() == "Expense"){
             });
         });
     });
+    
+$('#vehicle_id').change(function(){
+    $.get("{{ url('api/membership_status')}}", 
+    { option: $(this).val() }, 
+    function(data) {
+        $("#fee_amount").val('');
+        $("#fee_amount").removeAttr('disabled');
+        if( data === 'paid'){
+            $("#fee_amount").val('PAID');
+            $("#fee_amount").attr('disabled','disabled');
+        }
+    });
+});
+    
+$('#vehicle_id').change(function(){
+    $.get("{{ url('api/share_status')}}", 
+    { option: $(this).val() }, 
+    function(data) {
+        $("#shares").val('');
+        $("#shares").removeAttr('disabled');
+        if(data==='paid'){
+            $("#shares").val('PAID');
+            $("#shares").attr('disabled','disabled');
+        }
+    });
+});
 
 $('#amount').keyup(function(){
 var savings = $('#savings').val('0.00');
@@ -156,11 +182,12 @@ if(balance<loans || amount==''){
             <input required class="form-control datepicker" readonly="readonly" placeholder="" type="text" name="date" id="date" value="{{{ Input::old('date') }}}">
         </div>
        </div>
+        
        <div class="form-group col-md-6">
             <label for="username" class="fee_amount">Membership Fee
                 <span style="color:red">*</span>
             </label>
-            <input class="form-control fee_amount" placeholder="" type="text" name="fee_amount"  hidden="hidden" value="{{{ Input::old('fee_amount') }}}">
+            <input class="form-control fee_amount" placeholder="" type="text" name="fee_amount"  hidden="hidden" value="{{{ Input::old('fee_amount') }}}" id="fee_amount">
         </div>
         <div class="form-group col-md-6">
             <label for="username">Loan Product</label>

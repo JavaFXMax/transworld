@@ -1201,7 +1201,34 @@ Route::get('api/loanaccount', function(){
     return $loanproduct;
 });
 
+Route::get('api/membership_status',function(){
+    $id = Input::get('option');
+    $vehicle = Vehicle::find($id);
+    /*Get The member*/
+    $member= Member::where('id','=',$vehicle->member_id)->get()->first();
+    $shareaccount= Shareaccount::where('member_id','=',$vehicle->member_id)->get()->first();
 
+    $transactions= Sharetransaction::where('shareaccount_id','=',$shareaccount->id)
+        ->where('type','=','credit')->where('pay_for','=','membership')->sum('amount');
+    if($transactions >= $member->total_membership){
+        return $status='paid';
+    }
+});
+
+Route::get('api/share_status',function(){
+    $id = Input::get('option');
+    $vehicle = Vehicle::find($id);
+    /*Get The member*/
+    $member= Member::where('id','=',$vehicle->member_id)->get()->first();
+    $shareaccount= Shareaccount::where('member_id','=',$vehicle->member_id)->get()->first();
+
+    $transactions= Sharetransaction::where('shareaccount_id','=',$shareaccount->id)
+        ->where('type','=','credit')->where('pay_for','=','shares')->sum('amount');
+    
+    if($transactions >= $member->total_shares){
+        return $status='paid';
+    }
+});
 
 Route::post('import/loans', function(){
 
